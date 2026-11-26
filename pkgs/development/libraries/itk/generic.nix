@@ -106,6 +106,13 @@ stdenv.mkDerivation {
         '#include "itkSingletonMacro.h"' \
         '#include "itkSingletonMacro.h"
         #include <cstdint>'
+  ''
+  + lib.optionalString enablePython ''
+    # change python 2 API macro since swig removes them in v4.5.0.
+    substituteInPlace Wrapping/Generators/Python/PyBase/pyBase.i \
+      --replace-fail "PyInt_Check" "PyLong_Check" \
+      --replace-fail "PyInt_AsLong" "PyLong_AsLong" \
+      --replace-fail "PyInt_FromLong" "PyLong_FromLong"
   '';
 
   cmakeFlags = [
